@@ -189,19 +189,30 @@ Controlling the Robot with ros_control / ros2_control
 
 .. code-block:: xml
 
-	<extension>
-		<plugin plugin="mujoco.multiverse_connector">
-			<instance name="mujoco_client">
-				<config key="host" value="tcp://127.0.0.1" />
-				<config key="server_port" value="7000" />
-				<config key="client_port" value="7500" />
-				<config key="world_name" value="world" />
-				<config key="simulation_name" value="scene_simulation" />
-				<config key="send" value="{'body': ['position', 'quaternion'], 'joint': ['joint_angular_position', 'joint_linear_position', 'joint_angular_velocity', 'joint_linear_velocity', 'joint_force', 'joint_torque'], 'sensor': ['scalar']}" />
-				<config key="receive" value="{'lift': ['cmd_joint_angular_position'], 'arm': ['cmd_joint_angular_position'], 'wrist_yaw': ['cmd_joint_angular_position'], 'wrist_pitch': ['cmd_joint_angular_position'], 'wrist_roll': ['cmd_joint_angular_position'], 'gripper': ['cmd_joint_linear_position'], 'head_pan': ['cmd_joint_angular_position'], 'head_tilt': ['cmd_joint_angular_position']}" />
-			</instance>
-		</plugin>
-	</extension>
+  <extension>
+          <plugin plugin="mujoco.multiverse_connector">
+                  <instance name="mujoco_client">
+                          <config key="host" value="tcp://127.0.0.1" />
+                          <config key="server_port" value="7000" />
+                          <config key="client_port" value="7500" />
+                          <config key="world_name" value="world" />
+                          <config key="simulation_name" value="scene_simulation" />
+                          <config key="send" value="{'body': ['position', 'quaternion'], 'joint': ['joint_angular_position', 'joint_linear_position', 'joint_angular_velocity', 'joint_linear_velocity', 'joint_force', 'joint_torque'], 'sensor': ['scalar']}" />
+                          <config key="receive" value="{
+                            'left_wheel_vel': ['cmd_joint_velocity'],
+                            'right_wheel_vel': ['cmd_joint_velocity'],
+                            'lift': ['cmd_joint_linear_position'],
+                            'arm': ['cmd_scalar'],
+                            'wrist_yaw': ['cmd_joint_angular_position'],
+                            'wrist_pitch': ['cmd_joint_angular_position'],
+                            'wrist_roll': ['cmd_joint_angular_position'],
+                            'gripper': ['cmd_joint_linear_position'],
+                            'head_pan': ['cmd_joint_angular_position'],
+                            'head_tilt': ['cmd_joint_angular_position']
+                          }" />
+                  </instance>
+          </plugin>
+  </extension>
 
 The `receive` parameter defines which actuator commands are accepted for the robot joints.  
 Ensure that the actuator types match the joint definitions in your robot model (e.g., use `cmd_joint_angular_position` for revolute joints, `cmd_joint_linear_position` for prismatic joints, and `scalar` for tendons).
@@ -248,7 +259,7 @@ For **ROS2 (Foxy, Humble, Jazzy)** with `ros2_control`:
 		.. code-block:: bash
 			
 			source <path/to/Multiverse-ROS-Connector>/ros_ws/multiverse_ws2/install/setup.bash
-			ros2 run controller_manager controller_manager --ros-args --params-file <path/to/your/yaml>/stretch_ros2_control.yaml
+			ros2 run controller_manager ros2_control_node --ros-args --params-file <path/to/your/yaml>/stretch_ros2_control.yaml
 
 		Spawn the necessary controllers (e.g., `joint_state_broadcaster` and `joint_trajectory_controller`) in another terminal:
 
